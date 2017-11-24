@@ -125,6 +125,8 @@ class MellanoxSettings(object):
         else:
           current_driver = drivers_set[0]
           mellanox_interface = interfaces_set[0]
+          if ('bonds' in cls.data and mellanox_interface.startswith('bond')):
+              mellanox_interface = cls.data['bonds'][mellanox_interface]['interfaces'][0]
           if current_driver in ETH_DRIVERS:
               mlnx['network_type'] = 'ethernet'
               mlnx['cx_card'] = cls.get_card_type_by_interface_name(mellanox_interface)
@@ -135,8 +137,6 @@ class MellanoxSettings(object):
                 mlnx['cx_card'] = 'none'
                 logging.error('Failed executing ibdev2netdev')
                 return 0
-              if ('bonds' in cls.data and mellanox_interface.startswith('bond')):
-                  mellanox_interface = cls.data['bonds'][mellanox_interface]['interfaces'][0]
               mlnx['cx_card'] = cls.get_card_type_by_interface_name(mellanox_interface)
 
           network_info_msg = 'Detected Network Type is: {0} '.format(mlnx['network_type'])
